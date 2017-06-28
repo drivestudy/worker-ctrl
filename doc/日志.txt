@@ -1,0 +1,735 @@
+﻿2013/9/26 开始开发
+
+==2013/9/26 13:13:49
+1.命令通道协议,json
+
+命令发送格式:
+cmdreq-{json...}-#FI#
+命令响应格式:
+cmdres-{json...}-#FI#
+
+
+加密
+cmdreq-0-dskjjsdfsfsdgdfaaaaaaaaaaaaaaaaaaaaaaadgfadsfasdfadsfasdfasf-#FI#不加密
+cmdreq-128-dskjjsdfsfsdgdfaaaaaaaaaaaaaaaaaaaaaaadgfadsfasdfadsfasdfasf-#FI#
+cmdreq-192-dskjjsdfsfsdgdfaaaaaaaaaaaaaaaaaaaaaaadgfadsfasdfadsfasdfasf-#FI#
+cmdreq-256-dskjjsdfsfsdgdfaaaaaaaaaaaaaaaaaaaaaaadgfadsfasdfadsfasdfasf-#FI#
+
+
+命令类型：采用整型代表
+
+socket使用长连接，select轮询多个sock。
+
+push标志
+
+命令通道与推送方案：
+1.命令通道，控制程序的命令使用短连接
+2.推送功能，另外创建一个与服务端维持的长连接
+
+没有更新日志的情况下，开启sock读事件，接收客户端心跳测试和命令请求。
+若接收到心跳测试，优先处理心跳测试，处理完成后，再处理日志推送任务。
+
+//uuid具体信息
+uuid
+只有开启推送才有用
+conn 长连接
+是否开启推送
+
+typedef struct
+{
+	string uuid;
+	int sock;
+	bool push;
+};
+
+
+2.具体格式
+请求:
+{
+	"cmd" : xxx,
+	"uuid": uuid
+}
+
+响应:
+{
+	"cmd" : xxx,
+	"result": success/failed,
+	"info": info,//存储任何要返回的信息
+}
+
+
+除了申请控制不带uuid，其余所有操作，必须带uuid
+
+申请控制,申请一个操作uuid
+{
+	"cmd" : regctl
+}
+res:
+{
+	"cmd" : success/failed,//后期可能会考虑ip限制
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : regctl,
+	"uuid": uuid,
+	"res": success/failed
+}
+
+停止控制,释放操作uuid
+{
+	"cmd" : unregctl,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : success/failed
+}
+
+//申请推送(长连接)
+{
+	"cmd" : regpush,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : success/failed
+}
+
+//停止推送
+{
+	"cmd" : unregpush,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : success/failed
+}
+
+//关闭推送长连接
+直接关闭socket
+
+
+心跳
+{
+	"cmd" : heart,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : success/failed
+}
+心跳的响应返回程序的状态，start/stop/no
+
+服务端若判断心跳超时，认为控制客户端已关闭，直接关闭长连接sock。
+
+
+启动
+{
+	"cmd" : start,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : success/failed
+}
+
+停止
+{
+	"cmd" : stop,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : success/failed
+}
+
+重启
+{
+	"cmd" : reboot,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : success/failed
+}
+
+获取日志信息
+{
+	"cmd" : getlog,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : [log数组]
+}
+
+设置参数信息
+{
+	"cmd" : setparam,
+	"uuid": "uuid",
+	"ckip" : ["192.168.1.1","192.168.1.2",...],
+	"threadpool" : 30,
+	"balance" : 200,
+	"sqladdr":"192.168.1.1",
+	"sqlport":3306,
+	"sqluser":"root",
+	"sqlpasswd":"12345667",
+	"sqldbname":"webhelperlog"
+}
+res:
+{
+	"cmd" : success/failed
+}
+
+
+获取参数信息
+{
+	"cmd" : getparam,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : getparam,
+	"uuid": "uuid",
+	"ckip" : ["192.168.1.1","192.168.1.2",...],
+	"threadpool" : 30,
+	"balance" : 200,
+	"sqladdr":"192.168.1.1",
+	"sqlport":3306,
+	"sqluser":"root",
+	"sqlpasswd":"12345667",
+	"sqldbname":"webhelperlog"
+}
+
+
+sock连接数量
+{
+	"cmd" : getconn,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : 12
+}
+
+版本信息
+{
+	"cmd" : version,
+	"uuid": "uuid"
+}
+res:
+{
+	"cmd" : "v1.1",
+	"version" : "version
+}
+
+获取日志
+{
+	"cmd" : "getlog",
+	"uuid" : "uuid"
+}
+res:
+{
+	"cmd" : 
+}
+
+
+
+服务端推送:
+只要有数据，将数据推送到客户端控制sock列表。优先级比处理任务低
+
+
+3.日志
+任务数据提取：
+uid 操作类型 主账号 操作账号 点数 取款点数 存款点数     序号 页数     执行所用时间 任务开始时间 任务结束时间
+uid optype mainuser opuser point drawpoint depositpoint seqnum pagenum  usetime starttime endtime
+网站url
+
+处理过程的日志：
+RecordLog形参
+方法名，行数，错误码，错误信息,
+内置处理:当前时间(时间戳)
+
+考虑用一个类来存储错误日志，实现toString
+
+Balance thread pool=>
+load: normal/high/low
+Total thread: 30
+Idle thread: 20
+Create thread: 5   /   Delete thread:6
+Time: 2013-10-15 10:37:48 -> 2013-10-15 10:37:51
+
+Login suncity=>
+User name: encry65
+Cookie name: _encry65.ck
+Url: https://www.77msc.net:502
+Check cookie: 成功
+Relogin suncity: 成功
+Time: 2013/10/15 14:35:19 -> 2013/10/15 14:35:22
+Use time: 
+
+Auto clean=>
+__Delete keys: 15
+__Key1: kasfkjakk2kjskfa23
+__Key2: kasfkjakk2kjskfa23
+__Key3: kasfkjakk2kjskfa23
+__Time: 2013/10/15 14:35:19 -> 2013/10/15 14:35:22
+__Use time: 
+
+*********************************************设计log类
+线程与任务数据之间的关系，优化
+任务执行，线程池平衡，线程池分配任务执行线程(no)，自动登陆线程，自动清理线程. ctcpserver
+log分为不同的类型
+日志对象队列缓存，统一管理
+写入数据库
+
+1.优化线程与任务数据的关系
+2.派生多个不同的日志类
+3.修改全部单一标记	ok
+4.头文件和实现文件移动到src include	ok
+6.所有单例对象，都添加锁
+
+
+
+4.备忘
+是否被读取了结果，显示到界面
+log显示，有过滤功能，供选择
+长连接 短连接
+
+长连接：维持连接，心跳，断开重连，推送到客户端
+短连接：用完断开，主动轮询获取
+
+长连接，自己封装心跳包
+
+推送长连接关闭判断，设置超时时间，超时时间就是心跳测试时间
+
+超时，判断若是长连接
+
+ctrlinfo，为了在每次epoll轮询中，判断有无日志缓存，有的话，按照长连接的sock发送出去
+设置push标志
+
+
+====明天任务
+1.设计数据库表
+2.webhelper封装数据库操作
+3.将日志缓存信息写入数据库,若数据库连接失败，暂存在内存中
+4.设计客户端
+5.不同任务使用多态实现	
+6.激活用户，排序判断
+7.cookie过期的处理	no
+8.epoll调整到主线程执行listen	ok
+9.增加状态判断,打印版本	ok
+10.添加一个高权限命令，本地直接操作，不需要uuid
+或者添加一个ffffff高权限uuid，直接操作	ok
+11.webhelper一个新错误	ok
+12.webhelper -q马上返回，没有等退出	ok
+
+
+
+====2013/10/16 13:48:18
+多态封装：
+任务的判断，若同一个任务重复发送过来，不接受，设定一个时间段
+
+去掉宏定义，一些宏定义加入类中的静态变量，单独开类
+
+返回给客户端的，验证用户名，别名，System Error为false
+登陆网站，测试错误的情况，可能会产生的错误信息********针对每个网页重新抓取错误信息
+把所有结构体进行类化设计
+所有的enum都要改成类成员的enum，并实现tostring方法
+
+//test
+命令发送格式:
+cmdreq-{json...}-#FI#
+命令响应格式:
+cmdres-{json...}-#FI#
+
+cmdreq-{"cmd":0,"uuid":""}-#FI#
+
+cmdres-{"cmd":0,"info":"7b13fa6bfc604d1dbaf2af2244578f8d","result":1}-#FI#
+cmdres-{"cmd":0,"info":"fcbd686a22f14a008396d1bb76e6779d","result":1}-#FI#
+
+cmdreq-{"cmd":6,"uuid":"fcbd686a22f14a008396d1bb76e6779d"}-#FI#
+cmdreq-{"cmd":6,"uuid":"ROOTFFFFFF"}-#FI#
+
+
+心跳
+cmdreq-{"cmd":0,"uuid":""}-#FI#
+
+
+
+
+====2013/10/29 17:17:53
+1.设计界面
+工作台列表的列:
+ip 连接状态 运行状态 任务数 访问数 版本信息
+序号，复选框，程序设计成单选功能
+
+2.程序的启动和停止使用另外一个程序来控制
+3.在linux创建一个控制端
+
+ip port user pwd dbname fromdate todate
+设置:
+处理日志
+密码 uuid验证
+日志功能
+
+实时状态:
+线程数量 服务器数量 
+系统输出日志 发包数据 收包数据
+
+日志删除某个时间段
+查询和删除
+
+日志查询:
+服务器 操作类型 结果获取方式
+主账号 操作用户 用户类型 
+客户端IP 开始时间 结束时间
+执行结果
+
+xxxx-xx-xx xx:xx:xx
+###模拟人工操作的机制:
+
+设置界面：
+本地设置:
+1.本地日志数据库参数
+2.开机自启动 //,启动自动监控所有服务器
+3.配置文件,数据库sqlite
+
+远程设置
+1.太阳城自动登陆器:列表
+2.远程服务器设置:1.先获取参数,再修改参数
+	远程日志数据库参数:选择哪一台服务器
+
+
+
+界面实现代码分离:
+将每个tab页的页面分离到单独的widget，然后添加到tabwidget控件.
+系统日志由主界面控制
+
+
+修改设置 本地设置 远程设置
+
+ip正则
+
+[1-9]  [\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}
+
+1
+1 0
+1 0 0
+2 0 0
+
+([1-9]|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])(\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])){3}
+([1-9]|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])(\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])){3}
+
+
+==2013/11/4 16:01:46
+
+统计所有错误类型的个数，与成功的个数，也可以计算满足条件的个数
+统计数据：
+所有错误信息的个数
+所有服务器的访问量
+所有客户端的访问量
+
+访问量最高的用户
+访问量最高的主账户
+某个用户,操作类型的排行榜
+
+一个基本的报告
+排行榜页面
+select opuser,count(*) as counts from webhelper_log group by opuser order by counts desc;
+select master,count(*) as counts from webhelper_log group by master order by counts desc;
+select server_ip,count(*) as counts from webhelper_log group by server_ip order by counts desc;
+select client_ip,count(*) as counts from webhelper_log group by client_ip order by counts desc;
+select optype,count(*) as counts from webhelper_log group by optype order by counts desc;
+
+select optype,count(*) as counts from webhelper_log where opuser='jialin111' group by optype order by counts desc;
+
+只需要一个排行榜:
+a.服务端的访问量
+b.主账号的使用量
+c.操作用户的访问量
+d.客户端的访问量
+e.操作类型的排行
+f.错误类型的排行*********************
+
+有条件的：
+f.某个操作用户的操作类型排行
+
+可以加时间
+
+
+==2013/11/26 18:01:45
+3.配置文件存到sqlite ini xml
+4.输出实时日志
+6.监控线程设计
+
+1.开启和关闭服务器，界面提供进度，但也可以让用户关闭，将每个服务器的状态保存下来
+3.通信数据要加密,提供加密设置，设置级别，密码，协议要改变一下   no
+
+aes多余的参数   no
+可以跳转到第几行 no
+删除数据库的时候，输入密码 ok
+错误类型,过滤 ok
+tab顺序 ok
+
+==2013/11/29 10:45:30
+完成系统设置页面
+排行加时间的情况下，计算总数，应该要计算这个时间段的总数，，，，再考虑 ok
+
+设置数据库参数的时候，重新创建sql对象,使用最新参数 no
+
+修改监控周期，再点击编辑，没有写到配置文件中
+
+
+设置页面xml设计:
+<?xml version="1.0" encoding="utf-8"?>
+<setting>
+    <tabserver>
+        <server>
+            <ip>192.168.1.1</ip
+        </server>
+    </tabserver>
+    
+    <tabsetting>
+        <baseset>
+        </baseset>
+    </tabsetting>
+</setting>
+
+==2013/12/3 14:06:05
+远程设置，设置cookie服务器的地址到webhelper，包括日志数据库参数 ok
+选择列还没做 ok
+修改数据库参数，没有作用到数据库对象 ok
+
+以后可以优化：数据库查询使用分页功能，一页1000条记录
+远程设置，输入密码 ok
+
+同步用户界面:
+主账号 密码 任务码 提交任务 
+任务处理进度条 处理结果 错误信息
+提供一个列表，用来比较是否跟网站的列表一致，嵌入一个tab页（代理，会员），一页40条记录
+制作一个翻页的类
+tab顺序
+utf8转换中文 QString::fromUtf8(strRecv.toAscii().data());
+使用定时器轮询获取结果
+
+排行榜表格，双击复制表格 ok
+提交同步用户功能，添加一个停止按钮，有时候要关闭获取结果 ok
+添加查询列表的功能 ok
+
+发送任务，转移到线程
+函数：
+设置任务数据  
+发送成功失败的信号 
+获取结果,通知状态: failed success process unknown notexist
+线程结束信号
+
+表格:双击复制 ok
+
+==2013/12/13 18:16:05
+远程设置，测试外网 ok
+日志数据库改为 webhelper数据库 ok
+
+==2013/12/18 11:13:33
+更新webhelper流程
+1.传输文件到服务器某个特定目录:/etc/webhelper.d/
+2.为了和以前版本兼容，或一些特殊的情况，更新程序不判断版本号
+3.控制webhelper，开始删除webhelper旧版本目录，并编译新版本
+4.删除每分钟启动webhelper的crontab
+4.执行webhelper -q完成后，安装新版本即可
+5.安装结束后，设置每分钟启动webhelper的crontab
+
+前提:
+写好固定的shell脚本放在/etc/webhelper.d，然后webhelper提供一个控制命令，可以用来执行不同的脚本，控制命令可以指定即将执行的脚本的名字
+
+3.控制webhelper拒绝接收任务
+1.运行更新前准备的shell脚本
+2.上传webhelper
+4.开始运行更新程序的shell脚本，必须以守护进程的方式运行：该脚本的处理步骤:关闭webhelper的crontab,编译、退出、安装、打开webhelper的crontab
+第4部的前提：使用webhelper修改crontab，由crontab来调用安装的脚本，然后将时间传递到客户端
+
+
+若某个服务器版本号改变了，右下角图片弹出信息框提示   ok
+在线和离线，也要提示  ok
+
+
+增加一个命令控制，用来执行shell脚本文件
+
+pscp.exe错误信息:
+端口错误:Fatal: Network error: Connection refused
+ip不存在:Fatal: Network error: Connection timed out
+输入密码:root@192.168.1.163's password:
+输入密码错误:
+Access denied
+root@192.168.1.163's password:
+
+==下周
+1.使用scp工具传输，会存在一个验证问题，也因为不方便问题，所以要采用webupdate来传输文件  ok
+发送文件：将文件名与文件内容转换成十六进制   ok
+wait的时间缩短   ok
+
+==2014/1/4 10:44:31
+1.服务器的信息移动到数据仓库
+2.程序升级的时候，服务器编辑框不能使用，要禁用
+
+
+==2014/1/8 14:51:20
+提出下線
+存入下線
+上線存入
+上線提出
+
+
+交易金额:
+1,234.00
+-1,234.00
+-1.00
+111.00
+
+提交信息：
+网址：
+https://www.88msc.net:502/Reports/UserAcct.aspx
+
+__VIEWSTATE
+__EVENTVALIDATION
+wFromDate   2014/01/08
+FrtimeList  12:00:00
+wToDate     2014/01/09
+TotimeList  11:59:59
+wGameCat    L
+wMemberID   dltest0
+btnQuery    查詢
+
+1/8 15:21
+
+1/7 12:00 -> 1/9 12:00
+
+2014/01/08 15:06:12 上線存入(上線提出,上線存入,上線提出) -1,234.00 1,493.00
+
+正则
+<tr.*?style=\"background-color.*?>[\s\S]*?<td>.*?</td><td>(.*?)</td>.*?<td.*?align.*?style.*?>(.*?)</td>[\s\S]*?</tr>
+
+
+存点的任务数据:
+4076990a97ad79c835aaa1f8e56a7ca14bbe1971755d6bfeef3b795f12b9206797a5910699cbd9ff25bab579af78670c96c63ed58f50b7c59bdf8dfb600d9411dd85ff44b666abee5a434e6f7bbe059bf49faf4f26862383ffcd7a58134c287146e672a3a1c80354b9f9bc2b59bbfe6f446ff3c465c1e269240b9b71349b91b683eb0eaff27720bc0549607fdecabd2ff372335024128b036b971a242bd61482fc439d2bb6496d38fb4b60062f7efa5a87c56d138a4edffa4d4d8b213e65d10cc4ff9b59432af7e95576543910f57e3fe86dc7bee01c3eb21ed5f72e632747c9f0248eea5a4d0bfc8c7f425cbb458eace40019346ffe45b30b2767c5fbd4f39ea8e2fa91c1a188caae53c69c26fe6edb34ac9a10a27431a0bc2683b0db47f57e0079015be17c166a7b8fc7feb56a53af-c45c2c3d9058e6eea4457212a932227e-#FI#
+
+{"getResult":"2s164f8c192c75b18244fe183f661e9ad811"}-#FI#
+
+
+协议：一个命令获取所有基本信息
+{
+	"info" : jsonobj,
+	"result": 1 / 0
+}
+
+jsonobj
+{
+	"taskcount" : 0,
+	"viewcount" : 0,
+	"threadpoolsize" : 0,
+	"workthreadcount" : 0,
+	"threadpoolload" : 0/1/2,
+	"sendsize" : 1234,
+	"recvsize" : 1234,
+	"runtime" : 1234,
+	"ungetresultnum" : 1
+}
+
+测试:
+{
+"cmd" : 0,
+"pwd":"haoying123"
+}
+
+cmdreq-{json...}-#FI#
+命令响应格式:
+cmdres-{json...}-#FI#
+
+cmdreq-{"cmd":0,"pwd":"haoying123"}-#FI#
+
+cmdres-{"info":{"recvsize":0,"runtime":5,"sendsize":0,"taskcount":0,"threadpoolload":0,"threadpoolsize":30,"viewcount":1},"result":1}-#FI#
+cmdres-{"info":{"recvsize":40,"runtime":48,"sendsize":138,"taskcount":0,"threadpoolload":0,"threadpoolsize":30,"viewcount":1},"result":1}-#FI#
+
+
+mysql服务器:
+106.187.36.187 10003
+"124.150.130.3:188
+限制直连IP，可以通过（
+106.187.36.187:10003
+113.10.168.16:10003
+106.187.36.187:33306
+113.10.168.16:33306）"
+
+remote_tw_003	q5EwqNOomgk
+
+
+106.187.36.187 33306 remote_tw_003 q5EwqNOomgk webhelper
+
+
+
+/**
+cmdreq-0-dskjjsdfsfsdgdfaaaaaaaaaaaaaaaaaaaaaaadgfadsfasdfadsfasdfasf-#FI#不加密
+cmdreq-128-dskjjsdfsfsdgdfaaaaaaaaaaaaaaaaaaaaaaadgfadsfasdfadsfasdfasf-#FI#
+cmdreq-192-dskjjsdfsfsdgdfaaaaaaaaaaaaaaaaaaaaaaadgfadsfasdfadsfasdfasf-#FI#
+cmdreq-256-dskjjsdfsfsdgdfaaaaaaaaaaaaaaaaaaaaaaadgfadsfasdfadsfasdfasf-#FI#
+
+cmdreq-{json...}-#FI#
+命令响应格式:
+cmdres-{json...}-#FI#
+
+
+
+协议:
+请求:
+{
+    "cmd" : 命令,
+    "pwd" : 控制密码,
+    "opt" : {
+        //可变区域,json对象
+    }
+}
+
+请求带参数:
+{
+    "cmd" : 命令,
+    "pwd" : 控制密码,
+    "opt" : {
+	    "sql" : {
+	    	"ip" : "192.168.1.1",
+	    	"port" : 3306,
+	    	"user" : "root",
+	    	"pwd"  : "123456",
+	    	"dbname" : "webhelper"
+	    },
+	    "cookiesrv" :
+	    ["192.168.1.1:26128", "192.168.1.1:26128", "192.168.1.1:26128", "192.168.1.1:26128"]
+    }
+}
+
+
+响应:
+{
+    "info" : 信息,
+    "result" : 1 | 0, //1成功 0失败
+}
+
+实时信息的格式:
+{
+    "info" : {
+        "taskcount" : 0, //任务数量
+        "viewcount" : 0, //访问数量
+        "threadpoolsize" : 0,//线程池大小
+        "workthreadcount" : 0,//工作线程数
+        "threadpoolload" : 0/1/2,//线程池负载
+        "sendsize" : 1234,//发送数据大小
+        "recvsize" : 1234,//接收数据大小
+        "runtime" : 1234,//运行时间
+        "version" : "webhelper-v1.9"//版本
+    },
+    "result" : 1 | 0, //1成功 0失败
+}
+
+*/
+
+bdd8605ff973d07b7b99d8d867e1fe193bf4acacb5830052ee432f638c71997132a6afe1d9890379cf14299caeaf92f396c63ed58f50b7c59bdf8dfb600d9411dd85ff44b666abee5a434e6f7bbe059bf49faf4f26862383ffcd7a58134c287146e672a3a1c80354b9f9bc2b59bbfe6f3fc47b433cbad8b96d2b3abb5a20afb120e276934a5bcec6f84a6728f6da9501e498a03fd53ce255aa8b65797e9bbf3428e598961853e45412d17b208381876f38e67ec7f5f88a8756b87492d73bbf2d461e292866768e029afd1b47e98008d1e0665c703fef1f59844e83978a6256d871f8df787a60d0550fde7afd93ebfd99f7ddb6fdf2774b769c25248b6f771dde-319c9fb9c53881809c2a747596d26a2c-#FI#

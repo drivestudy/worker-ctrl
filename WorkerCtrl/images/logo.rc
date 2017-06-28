@@ -1,0 +1,30 @@
+#include "winver.h"
+IDI_ICON1		ICON		DISCARDABLE	"logo.ico"//文件图标
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,4
+ PRODUCTVERSION 1,0,0,4
+ FILEFLAGS 0x0L
+ FILEFLAGSMASK 0x3fL
+ FILEOS 0x00040004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "CompanyName", "厦门浩赢网络科技有限公司" //公司
+            VALUE "FileDescription", "服务器远程控制中心" //文件说明
+            VALUE "FileVersion", "1.0.0.4" //文件版本
+            VALUE "LegalCopyright", "Copyright (C) 2013 hytech." //法律版权所有
+            VALUE "InternalName", "服务器远程控制中心" //内部名称
+            VALUE "OriginalFilename", "" //原始文件名
+            VALUE "ProductName", "服务器远程控制中心" //产品名称
+            VALUE "ProductVersion", "1.0.0.4"//产品版本
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END

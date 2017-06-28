@@ -1,0 +1,941 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TabLogWidget</class>
+ <widget class="QWidget" name="TabLogWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>781</width>
+    <height>511</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QGroupBox" name="grpBoxLog">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>761</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>日志查询条件</string>
+   </property>
+   <widget class="QLabel" name="labelA0">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>服务器:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelA1">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>20</y>
+      <width>51</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>主账号:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineMaster">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>20</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>空表示全部</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineOpUser">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>20</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>空表示全部</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelA2">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>20</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>操作用户:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineClientIp">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>50</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="placeholderText">
+     <string>IP地址(空表示全部)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelB0">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>客户端:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelB1">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>50</y>
+      <width>51</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>开始时间:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelB2">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>50</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>结束时间:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBoxTaskResult">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>110</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <item>
+     <property name="text">
+      <string>全部</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>1.成功</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>0.失败</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="labelD0">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>61</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>执行结果:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBoxUserType">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>80</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <item>
+     <property name="text">
+      <string>全部</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>1.会员</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>2.代理</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="labelC0">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>用户类型:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBoxOpType">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>80</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="maxVisibleItems">
+     <number>40</number>
+    </property>
+    <item>
+     <property name="text">
+      <string>全部</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>1.用户注册</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>2.编辑用户信息</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>3.用户状态切换</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>4.投注状态切换</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>5.存入点数</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>6.提出点数</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>7.获取用户点数</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>8.获取主账号点数</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>9.登录激活-&gt;(新)账号解锁</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>10.注册激活(新版未使用)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>11.验证用户名</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>12.验证别名</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>13.同步用户名</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>14.同步报表</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>15.获取用户/投注状态</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>16.账号转移</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="labelC1">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>80</y>
+      <width>51</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>操作类型:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBoxResultMethod">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>80</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <item>
+     <property name="text">
+      <string>全部</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>get</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>post</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="labelC2">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>80</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>结果获取方式:</string>
+    </property>
+   </widget>
+   <widget class="QDateTimeEdit" name="dateTimeFrom">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>50</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="displayFormat">
+     <string>yyyy-MM-dd hh:mm:ss</string>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QDateTimeEdit" name="dateTimeTo">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>50</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="displayFormat">
+     <string>yyyy-MM-dd hh:mm:ss</string>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBoxErrorType">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>110</y>
+      <width>401</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="maxVisibleItems">
+     <number>40</number>
+    </property>
+    <item>
+     <property name="text">
+      <string>全部</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>0.成功</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>1.失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>2.连接到cookie服务器失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>3.发送用户名密码失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>4.接收cookie失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>5.cookie服务器返回的信息格式错误</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>6.AES加密数据格式错误</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>7.太阳城登陆失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>8.太阳城正在维护</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>9.cookie过期(System Error)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>10.cookie过期(404 - File or directory not found)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>11.cookie过期(This page uses frames)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>12.squid错误(The requested URL could not be retrieved)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>13.cookie过期(太阳城错误)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>14.json格式错误</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>15.下载页面失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>16.提交数据失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>17.curl初始化失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>18.写文件失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>19.匹配不到数据</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>20.找不到激活用户</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>21.操作类型错误</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>22.用户类型错误</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>23.用户/投注状态错误</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>24.用户密码为空</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>25.唯一码为空</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>26.自定义(网页返回的错误信息)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>27.查询报表的日期为空</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>28.数据库参数错误</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>29.数据库初始化失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>30.数据库连接失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>31.注册失败,搜索不到用户</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>32.数据库命令执行失败</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>33.空指针错误</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>-1.未知错误</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="labelD1">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>110</y>
+      <width>51</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>错误类型:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBoxServerIp">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>20</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="editable">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="grpBoxSearchResult">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>260</y>
+     <width>761</width>
+     <height>181</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>查询结果</string>
+   </property>
+   <widget class="QTableWidget" name="tableSearchResult">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>741</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::ExtendedSelection</enum>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
+    <property name="sortingEnabled">
+     <bool>true</bool>
+    </property>
+    <attribute name="horizontalHeaderDefaultSectionSize">
+     <number>90</number>
+    </attribute>
+    <attribute name="horizontalHeaderHighlightSections">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="verticalHeaderHighlightSections">
+     <bool>false</bool>
+    </attribute>
+    <column>
+     <property name="text">
+      <string>唯一码</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>服务器IP</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>操作类型</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>子任务</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>主账号</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>操作用户</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>用户类型</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>用户点数</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>存入/提出点数</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>序号</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>页数</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>主页网址</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>回调网址</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>结果获取方式</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>网页响应信息</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>错误源文件</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>错误函数</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>错误行号</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>网页存储路径</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>错误信息</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>CURL错误信息</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>客户端IP</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>客户端端口</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>开始时间</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>结束时间</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>使用时间</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>执行结果</string>
+     </property>
+    </column>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="grpBoxSqlOp">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>170</y>
+     <width>761</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>数据库操作</string>
+   </property>
+   <widget class="QPushButton" name="btnClearResult">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>20</y>
+      <width>91</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>清空查询结果</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnSearch">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>61</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>查询</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnReset">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>20</y>
+      <width>61</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>重置</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnDelete">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>20</y>
+      <width>61</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>删除</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnCount">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>20</y>
+      <width>61</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>计数</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>lineMaster</tabstop>
+  <tabstop>lineOpUser</tabstop>
+  <tabstop>lineClientIp</tabstop>
+  <tabstop>dateTimeFrom</tabstop>
+  <tabstop>dateTimeTo</tabstop>
+  <tabstop>comboBoxUserType</tabstop>
+  <tabstop>comboBoxOpType</tabstop>
+  <tabstop>comboBoxResultMethod</tabstop>
+  <tabstop>comboBoxTaskResult</tabstop>
+  <tabstop>comboBoxErrorType</tabstop>
+  <tabstop>btnSearch</tabstop>
+  <tabstop>btnDelete</tabstop>
+  <tabstop>btnCount</tabstop>
+  <tabstop>btnReset</tabstop>
+  <tabstop>btnClearResult</tabstop>
+  <tabstop>tableSearchResult</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
